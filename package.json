@@ -5,8 +5,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node ./bin/server.js",
     "start:dev": "cross-env NODE_ENV=development nodemon ./bin/server.js",
-    "lint": "eslint **/*.js",
-    "lint:fix": "eslint --fix **/*.js"
+    "lint": "eslint **/*.{js, json}",
+    "lint:fix": "eslint --fix **/*.{js, json}"
   },
   "dependencies": {
     "cors": "2.8.5",
@@ -20,6 +20,13 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "nodemon": "2.0.7"
-  }
+    "husky": "^4.3.8",
+    "lint-staged": "^11.0.0",
+    "nodemon": "2.0.7",
+    "prettier": "^2.3.1"
+  },
+  "hooks": {
+    "pre-commit": "lint-staged"
+  },
+  "**/*.{js,json}": "npm run lint:fix"
 }
