@@ -1,24 +1,24 @@
-import express from 'express';
-import cors from 'cors';
-// import logger from 'morgan';
-import { HttpCode } from './helpers/constants.js';
-import { router } from './routes/api/contacts/contacts.js';
+const express = require('express');
+const cors = require('cors');
+const logger = require('morgan');
+const { HttpCode } = require('./src/helpers/constants');
+const { router } = require('./src/api/contacts/contactsRouter');
 
-export const app = express();
+const app = express();
 
-// const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
+const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
-// app.use(logger(formatsLogger));
+app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-app.use('/routes/api/contacts', router);
+app.use('/api/contacts', router);
 
 app.use((req, res) => {
   res.status(HttpCode.NOT_FOUND).json({
     status: 'error',
     code: HttpCode.NOT_FOUND,
-    message: `Use api on routes ${req.baseUrl}/routes/api/contacts`,
+    message: `Use api on routes ${req.baseUrl}/api/contacts`,
     data: 'Not Found',
   });
 });
@@ -32,3 +32,5 @@ app.use((err, req, res, next) => {
     data: err.status === 500 ? 'Internal Server Error' : err.data,
   });
 });
+
+module.exports = app;

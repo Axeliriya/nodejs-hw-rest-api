@@ -1,31 +1,29 @@
-import { HttpCode } from '../../helpers/constants.js';
-import ContactsService from '../../services/contactsService.js';
+const { HttpCode } = require('../helpers/constants');
+const { ContactsService } = require('../services');
 
 const contactsService = new ContactsService();
 
-export const listContacts = async (req, res, next) => {
+const listContacts = async (req, res, next) => {
   try {
     const contacts = await contactsService.listContacts();
     res.status(HttpCode.OK).json({
       status: 'success',
       code: HttpCode.OK,
-      data: {
-        contacts,
-      },
+      contacts,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const getById = async (req, res, next) => {
+const getById = async (req, res, next) => {
   try {
     const contact = await contactsService.getById(req.params);
     if (contact) {
       return res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        data: {
+        contacts: {
           contact,
         },
       });
@@ -41,30 +39,53 @@ export const getById = async (req, res, next) => {
   }
 };
 
-export const addContact = async (req, res, next) => {
+const addContact = async (req, res, next) => {
   try {
-    const contact = await contactsService.addContact(req.body);
+    const contacts = await contactsService.addContact(req.body);
     res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
-      data: {
-        contact,
-      },
+      contacts,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export const removeContact = async (req, res, next) => {
+const removeContact = async (req, res, next) => {
   try {
-    const contact = await contactsService.removeContact(req.params);
+    const { data, contact } = await contactsService.removeContact(req.params);
     if (contact) {
       return res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        data: {
-          contact,
+        message: 'Contact successfully deleted',
+        contacts: data,
+      });
+    } else {
+      return next({
+        status: HttpCode.NOT_FOUND,
+        message: 'Not found contact',
+        data: 'Not Found',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateContact = async (req, res, next) => {
+  try {
+    const contactUpdated = await contactsService.updateContact(
+      req.params,
+      req.body,
+    );
+    if (contactUpdated) {
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        contacts: {
+          contact: contactUpdated,
         },
       });
     } else {
@@ -79,28 +100,10 @@ export const removeContact = async (req, res, next) => {
   }
 };
 
-export const updateContact = async (req, res, next) => {
-  try {
-    const contactsUpdate = await contactsService.updateContact(
-      req.params,
-      req.body,
-    );
-    if (contactsUpdate) {
-      return res.status(HttpCode.OK).json({
-        status: 'success',
-        code: HttpCode.OK,
-        data: {
-          contacts: contactsUpdate,
-        },
-      });
-    } else {
-      return next({
-        status: HttpCode.NOT_FOUND,
-        message: 'Not found contact',
-        data: 'Not Found',
-      });
-    }
-  } catch (error) {
-    next(error);
-  }
+module.exports = {
+  listContacts,
+  getById,
+  addContact,
+  removeContact,
+  updateContact,
 };

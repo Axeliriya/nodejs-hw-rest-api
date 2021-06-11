@@ -1,17 +1,17 @@
-import { Router } from 'express';
-import {
+const { Router } = require('express');
+const {
   listContacts,
   getById,
   addContact,
   removeContact,
   updateContact,
-} from '../../controllers/contacts.js';
-import {
+} = require('../../controllers/contactsController');
+const {
   validateCreate,
   validateUpdate,
-} from '../../../validation/validationContacts.js';
+} = require('../../validation/validationContacts');
 
-export const router = Router();
+const router = Router();
 
 router
   .get('/', listContacts)
@@ -19,3 +19,5 @@ router
   .post('/', validateCreate, addContact)
   .delete('/:contactId', removeContact)
   .put('/:contactId', validateUpdate, updateContact);
+
+module.exports = { router };
