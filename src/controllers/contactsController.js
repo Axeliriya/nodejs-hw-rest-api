@@ -59,7 +59,7 @@ const removeContact = async (req, res, next) => {
       return res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        message: 'Contact successfully deleted',
+        message: 'Contact deleted',
         contacts: data,
       });
     } else {
@@ -76,23 +76,31 @@ const removeContact = async (req, res, next) => {
 
 const updateContact = async (req, res, next) => {
   try {
-    const contactUpdated = await contactsService.updateContact(
-      req.params,
-      req.body,
-    );
-    if (contactUpdated) {
-      return res.status(HttpCode.OK).json({
-        status: 'success',
-        code: HttpCode.OK,
-        contacts: {
-          contact: contactUpdated,
-        },
-      });
+    if (Object.keys(req.body).length > 0) {
+      const contactUpdated = await contactsService.updateContact(
+        req.params,
+        req.body,
+      );
+      if (contactUpdated) {
+        return res.status(HttpCode.OK).json({
+          status: 'success',
+          code: HttpCode.OK,
+          contacts: {
+            contact: contactUpdated,
+          },
+        });
+      } else {
+        return next({
+          status: HttpCode.NOT_FOUND,
+          message: 'Not found contact',
+          data: 'Not Found',
+        });
+      }
     } else {
       return next({
-        status: HttpCode.NOT_FOUND,
-        message: 'Not found contact',
-        data: 'Not Found',
+        status: HttpCode.BAD_REQUEST,
+        message: 'Missing field',
+        data: 'Bad Request',
       });
     }
   } catch (error) {
