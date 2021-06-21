@@ -41,11 +41,13 @@ const getById = async (req, res, next) => {
 
 const addContact = async (req, res, next) => {
   try {
-    const contacts = await contactsService.addContact(req.body);
+    const contact = await contactsService.addContact(req.body);
     res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
-      contacts,
+      contacts: {
+        contact,
+      },
     });
   } catch (error) {
     next(error);
@@ -54,13 +56,15 @@ const addContact = async (req, res, next) => {
 
 const removeContact = async (req, res, next) => {
   try {
-    const { data, contact } = await contactsService.removeContact(req.params);
+    const contact = await contactsService.removeContact(req.params);
     if (contact) {
       return res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
         message: 'Contact deleted',
-        contacts: data,
+        contacts: {
+          contact,
+        },
       });
     } else {
       return next({
@@ -77,16 +81,44 @@ const removeContact = async (req, res, next) => {
 const updateContact = async (req, res, next) => {
   try {
     if (Object.keys(req.body).length > 0) {
-      const contactUpdated = await contactsService.updateContact(
-        req.params,
-        req.body,
-      );
-      if (contactUpdated) {
+      const contact = await contactsService.updateContact(req.params, req.body);
+      if (contact) {
         return res.status(HttpCode.OK).json({
           status: 'success',
           code: HttpCode.OK,
           contacts: {
-            contact: contactUpdated,
+            contact,
+          },
+        });
+      } else {
+        return next({
+          status: HttpCode.NOT_FOUND,
+          message: 'Not found contact',
+          data: 'Not Found',
+        });
+      }
+    } else {
+      return next({
+        status: HttpCode.BAD_REQUEST,
+        message: 'Missing field',
+        data: 'Bad Request',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const updateStatusContact = async (req, res, next) => {
+  try {
+    if (Object.keys(req.body).length > 0) {
+      const contact = await contactsService.updateContact(req.params, req.body);
+      if (contact) {
+        return res.status(HttpCode.OK).json({
+          status: 'success',
+          code: HttpCode.OK,
+          contacts: {
+            contact,
           },
         });
       } else {
@@ -114,4 +146,5 @@ module.exports = {
   addContact,
   removeContact,
   updateContact,
+  updateStatusContact,
 };
