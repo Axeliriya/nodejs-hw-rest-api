@@ -5,7 +5,7 @@ const contactsService = new ContactsService();
 
 const listContacts = async (req, res, next) => {
   try {
-    const contacts = await contactsService.listContacts();
+    const contacts = await contactsService.listContacts(req.query);
     res.status(HttpCode.OK).json({
       status: 'success',
       code: HttpCode.OK,
@@ -41,7 +41,8 @@ const getById = async (req, res, next) => {
 
 const addContact = async (req, res, next) => {
   try {
-    const contact = await contactsService.addContact(req.body);
+    const id = req.user.id;
+    const contact = await contactsService.addContact(id, req.body);
     res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,

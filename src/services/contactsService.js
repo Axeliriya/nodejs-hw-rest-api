@@ -7,8 +7,8 @@ class ContactsService {
     };
   }
 
-  async listContacts() {
-    const data = await this.repositories.contacts.listContacts();
+  async listContacts(query) {
+    const data = await this.repositories.contacts.listContacts(query);
     return data;
   }
 
@@ -17,8 +17,8 @@ class ContactsService {
     return data;
   }
 
-  async addContact(body) {
-    const data = await this.repositories.contacts.addContact(body);
+  async addContact(id, body) {
+    const data = await this.repositories.contacts.addContact(id, body);
     return data;
   }
 

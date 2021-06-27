@@ -3,6 +3,7 @@ const cors = require('cors');
 const logger = require('morgan');
 const { HttpCode } = require('./src/helpers/constants');
 const { router } = require('./src/api/contacts/contactsRouter');
+const { routerUsers } = require('./src/api/users/usersRouter');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/contacts', router);
+app.use('/api/users', routerUsers);
 
 app.use((req, res) => {
   res.status(HttpCode.NOT_FOUND).json({

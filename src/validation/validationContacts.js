@@ -9,10 +9,7 @@ const schemaCreateContact = joi.object({
       RegularExpressions.ERROR_MESSAGE_NAME,
     )
     .required(),
-  email: joi
-    .string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-    .required(),
+  email: joi.string().email({ minDomainSegments: 2 }).required(),
   phone: joi
     .string()
     .pattern(
@@ -21,7 +18,7 @@ const schemaCreateContact = joi.object({
     )
     .required(),
   favorite: joi.boolean().optional(),
-  user: joi.object().optional(),
+  owner: joi.object().optional(),
 });
 
 const schemaUpdateContact = joi.object({
@@ -32,10 +29,7 @@ const schemaUpdateContact = joi.object({
       RegularExpressions.ERROR_MESSAGE_NAME,
     )
     .optional(),
-  email: joi
-    .string()
-    .email({ minDomainSegments: 2, tlds: { allow: ['com', 'net'] } })
-    .optional(),
+  email: joi.string().email({ minDomainSegments: 2 }).optional(),
   phone: joi
     .string()
     .pattern(
@@ -44,7 +38,7 @@ const schemaUpdateContact = joi.object({
     )
     .optional(),
   favorite: joi.boolean().optional(),
-  user: joi.object().optional(),
+  owner: joi.object().optional(),
 });
 
 const schemaUpdateStatusContact = joi.object({

@@ -5,8 +5,8 @@ class ContactsRepository {
     this.model = Contact;
   }
 
-  async listContacts() {
-    const data = await this.model.find({});
+  async listContacts({ limit = 5, offset = 0 }) {
+    const data = await this.model.paginate({}, { limit, offset });
     return data;
   }
 
@@ -15,8 +15,8 @@ class ContactsRepository {
     return contact;
   }
 
-  async addContact(body) {
-    const contact = await this.model.create(body);
+  async addContact(id, body) {
+    const contact = await this.model.create({ ...body, owner: id });
     return contact;
   }
 
