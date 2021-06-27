@@ -5,16 +5,18 @@ const authService = new AuthsService();
 const userService = new UsersService();
 
 const registration = async (req, res, next) => {
-  const user = await userService.findByEmail(req.body);
+  const { email, password } = req.body;
+  const user = await userService.findByEmail(email);
   if (user) {
     return next({
       status: HttpCode.CONFLICT,
       message: `This email is already use`,
+      data: 'Conflict',
     });
   }
   try {
-    const newUser = await userService.createUser(req.body);
-    res.status(HttpCode.CREATED).json({
+    const newUser = await userService.createUser(email, password);
+    return res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
       users: [
@@ -32,9 +34,10 @@ const registration = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const token = await authService.login(req.body);
+    const { email, password } = req.body;
+    const token = await authService.login(email, password);
     if (token) {
-      res.status(HttpCode.OK).json({
+      return res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
         token,

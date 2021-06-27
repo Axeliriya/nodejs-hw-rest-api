@@ -7,12 +7,12 @@ class UsersService {
     };
   }
 
-  async createUser(body) {
-    const user = await this.repositories.users.createUser(body);
+  async createUser(email, password) {
+    const user = await this.repositories.users.createUser(email, password);
     return user;
   }
 
-  async findByEmail({ email }) {
+  async findByEmail(email) {
     const data = await this.repositories.users.findByEmail(email);
     return data;
   }

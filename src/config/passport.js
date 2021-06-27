@@ -15,8 +15,13 @@ passport.use(
     try {
       const service = new UsersService();
       const user = await service.findById(payload.id);
-      if (!user) return done(new Error('User not found'));
-      if (!user.token) return done(null, false);
+      console.log(user);
+      if (!user) {
+        return done(new Error('User not found'));
+      }
+      if (!user.token) {
+        return done(null, false);
+      }
       return done(null, user);
     } catch (error) {
       done(error);

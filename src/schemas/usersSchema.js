@@ -7,7 +7,7 @@ const userSchema = new Schema(
   {
     name: {
       type: String,
-      default: 'User',
+      default: 'Guest',
     },
     password: {
       type: String,
@@ -17,10 +17,6 @@ const userSchema = new Schema(
       type: String,
       required: [true, 'Email is required'],
       unique: true,
-      validate(value) {
-        const reg = /\S+@\S+\.\S+/;
-        return reg.test(String(value).toLowerCase());
-      },
     },
     subscription: {
       type: String,

@@ -2,8 +2,8 @@ const passport = require('passport');
 const { HttpCode } = require('./constants');
 require('../config/passport');
 
-const guard = (req, res, next) => {
-  passport.authenticate('jwt', { session: false }, (error, user) => {
+const guard = async (req, res, next) => {
+  await passport.authenticate('jwt', { session: false }, (error, user) => {
     if (error || !user) {
       return next({
         status: HttpCode.FORBIDDEN,
@@ -12,7 +12,7 @@ const guard = (req, res, next) => {
       });
     }
     req.user = user;
-    next();
+    return next();
   })(req, res, next);
 };
 

@@ -12,14 +12,14 @@ class AuthService {
     };
   }
 
-  async login({ email, password }) {
+  async login(email, password) {
     const user = await this.repositories.users.findByEmail(email);
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return null;
     }
     const id = user.id;
     const payload = { id };
-    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign(payload, SECRET_KEY, { expiresIn: '5h' });
     await this.repositories.users.updateToken(id, token);
     return token;
   }

@@ -5,9 +5,11 @@ class UsersRepository {
     this.model = User;
   }
 
-  async createUser(body) {
-    const user = await this.model(body);
-    return user.save();
+  async createUser(email, password) {
+    const Model = this.model;
+    const user = await new Model({ email, password });
+    console.log(user);
+    return await user.save();
   }
 
   async findById(id) {
@@ -21,7 +23,7 @@ class UsersRepository {
   }
 
   async updateToken(id, token) {
-    return await this.model.updateOne({ _id: id, token });
+    return await this.model.updateOne({ _id: id }, { token });
   }
 }
 

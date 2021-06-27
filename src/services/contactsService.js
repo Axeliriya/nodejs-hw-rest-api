@@ -7,13 +7,14 @@ class ContactsService {
     };
   }
 
-  async listContacts(query) {
-    const data = await this.repositories.contacts.listContacts(query);
-    return data;
+  async listContacts(id, query) {
+    const data = await this.repositories.contacts.listContacts(id, query);
+    const { docs: contacts, totalDocs: total, limit, offset } = data;
+    return { contacts, total, limit: Number(limit), offset: Number(offset) };
   }
 
-  async getById(contactId) {
-    const data = await this.repositories.contacts.getById(contactId);
+  async getById(id, contactId) {
+    const data = await this.repositories.contacts.getById(id, contactId);
     return data;
   }
 
@@ -22,13 +23,14 @@ class ContactsService {
     return data;
   }
 
-  async removeContact(contactId) {
-    const data = await this.repositories.contacts.removeContact(contactId);
+  async removeContact(id, contactId) {
+    const data = await this.repositories.contacts.removeContact(id, contactId);
     return data;
   }
 
-  async updateContact(contactId, body) {
+  async updateContact(id, contactId, body) {
     const data = await this.repositories.contacts.updateContact(
+      id,
       contactId,
       body,
     );
