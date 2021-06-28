@@ -24,6 +24,15 @@ class UsersRepository {
   async updateToken(id, token) {
     return await this.model.updateOne({ _id: id }, { token });
   }
+
+  async updateSubscr(userId, body) {
+    const { name, email, subscription } = await this.model.findByIdAndUpdate(
+      { _id: userId },
+      { ...body },
+      { new: true },
+    );
+    return { name, email, subscription };
+  }
 }
 
 module.exports = UsersRepository;

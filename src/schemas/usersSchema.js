@@ -20,7 +20,11 @@ const userSchema = new Schema(
     },
     subscription: {
       type: String,
-      enum: [Subscription.STARTER, Subscription.PRO, Subscription.BUSINESS],
+      enum: {
+        values: [Subscription.STARTER, Subscription.PRO, Subscription.BUSINESS],
+        message:
+          'You can choose from three subscriptions: Starter, Pro or Business',
+      },
       default: Subscription.STARTER,
     },
     token: {

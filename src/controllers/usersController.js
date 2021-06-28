@@ -1,8 +1,9 @@
-const { HttpCode } = require('../helpers/constants');
+const { HttpCode, Subscription } = require('../helpers/constants');
 const { AuthsService, UsersService } = require('../services');
 
 const authService = new AuthsService();
 const userService = new UsersService();
+const { STARTER, PRO, BUSINESS } = Subscription;
 
 const registration = async (req, res, next) => {
   const { email, password } = req.body;
@@ -34,12 +35,12 @@ const registration = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   try {
-    const { email, subscription } = req.user;
+    const { name, email, subscription } = req.user;
     if (req.user) {
       return await res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        ResponseBody: { email, subscription },
+        ResponseBody: { name, email, subscription },
       });
     }
   } catch (error) {
@@ -77,9 +78,46 @@ const logout = async (req, res, next) => {
   });
 };
 
+const updateSubscriptionById = async (req, res, next) => {
+  try {
+    console.log(req.body);
+    if (Object.keys(req.body).length > 0) {
+      const user = await userService.updateSubscr(req.user.id, req.body);
+      if (
+        req.body.subscription === STARTER ||
+        req.body.subscription === PRO ||
+        req.body.subscription === BUSINESS
+      ) {
+        return res.status(HttpCode.OK).json({
+          status: 'success',
+          code: HttpCode.OK,
+          users: {
+            user,
+          },
+        });
+      } else {
+        return next({
+          status: HttpCode.NOT_FOUND,
+          message: `You can choose from three subscriptions: ${STARTER}, ${PRO} or ${BUSINESS}`,
+          data: 'Not Found',
+        });
+      }
+    } else {
+      return next({
+        status: HttpCode.BAD_REQUEST,
+        message: 'Missing field',
+        data: 'Bad Request',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUser,
   registration,
   login,
   logout,
+  updateSubscriptionById,
 };

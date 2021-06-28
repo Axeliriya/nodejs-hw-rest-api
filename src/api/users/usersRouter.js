@@ -4,8 +4,12 @@ const {
   registration,
   login,
   logout,
+  updateSubscriptionById,
 } = require('../../controllers/usersController');
-const { validateCreate } = require('../../validation/validationUsers');
+const {
+  validateCreate,
+  validateUpdate,
+} = require('../../validation/validationUsers');
 const guard = require('../../helpers/guard');
 const userGuard = require('../../helpers/userGuard');
 const { createAccountLimiter } = require('../../helpers/rate-limit');
@@ -13,6 +17,7 @@ const { createAccountLimiter } = require('../../helpers/rate-limit');
 const routerUsers = Router();
 
 routerUsers
+  .patch('/', userGuard, validateUpdate, updateSubscriptionById)
   .get('/current', userGuard, getUser)
   .post('/signup', createAccountLimiter, validateCreate, registration)
   .post('/login', validateCreate, login)

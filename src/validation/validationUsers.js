@@ -14,8 +14,12 @@ const schemaCreateUser = joi.object({
     .string()
     .pattern(new RegExp(RegularExpressions.PASSWORD))
     .required(),
-  subscription: joi.boolean().optional(),
+  subscription: joi.string().optional(),
   token: joi.object().optional(),
+});
+
+const schemaUpdateUserSubscr = joi.object({
+  subscription: joi.string().required(),
 });
 
 const validate = (schema, body, next) => {
@@ -33,4 +37,8 @@ const validate = (schema, body, next) => {
 
 module.exports.validateCreate = (req, res, next) => {
   return validate(schemaCreateUser, req.body, next);
+};
+
+module.exports.validateUpdate = (req, res, next) => {
+  return validate(schemaUpdateUserSubscr, req.body, next);
 };
