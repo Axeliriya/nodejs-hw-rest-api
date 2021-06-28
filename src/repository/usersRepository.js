@@ -8,7 +8,6 @@ class UsersRepository {
   async createUser(email, password) {
     const Model = this.model;
     const user = await new Model({ email, password });
-    console.log(user);
     return await user.save();
   }
 

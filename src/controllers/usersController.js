@@ -32,6 +32,21 @@ const registration = async (req, res, next) => {
   }
 };
 
+const getUser = async (req, res, next) => {
+  try {
+    const { email, subscription } = req.user;
+    if (req.user) {
+      return await res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        ResponseBody: { email, subscription },
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -63,6 +78,7 @@ const logout = async (req, res, next) => {
 };
 
 module.exports = {
+  getUser,
   registration,
   login,
   logout,

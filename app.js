@@ -1,18 +1,38 @@
 const express = require('express');
 const cors = require('cors');
 const logger = require('morgan');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const { apiLimit, jsonLimit } = require('./src/config/rate-limit.json');
 const { HttpCode } = require('./src/helpers/constants');
 const { router } = require('./src/api/contacts/contactsRouter');
 const { routerUsers } = require('./src/api/users/usersRouter');
+const { ErrorHandler } = require('./src/helpers/errorHandler');
 
 const app = express();
 
 const formatsLogger = app.get('env') === 'development' ? 'dev' : 'short';
 
 app.use(logger(formatsLogger));
+app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: jsonLimit }));
 
+app.use(
+  '/api/',
+  rateLimit({
+    windowMs: apiLimit.windowMs,
+    max: apiLimit.max,
+    handler: (req, res, next) => {
+      next(
+        new ErrorHandler(
+          HttpCode.BAD_REQUEST,
+          '15 minutes request limit exceeded',
+        ),
+      );
+    },
+  }),
+);
 app.use('/api/users', routerUsers);
 app.use('/api/contacts', router);
 

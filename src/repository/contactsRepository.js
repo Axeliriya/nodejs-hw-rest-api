@@ -7,7 +7,7 @@ class ContactsRepository {
 
   async listContacts(
     id,
-    { limit = 5, offset = 0, sortBy, sortByDesc, filter },
+    { limit = 5, offset = 0, sortBy, sortByDesc, favorite, filter },
   ) {
     const data = await this.model.paginate(
       { owner: id },

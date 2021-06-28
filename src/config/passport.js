@@ -15,7 +15,6 @@ passport.use(
     try {
       const service = new UsersService();
       const user = await service.findById(payload.id);
-      console.log(user);
       if (!user) {
         return done(new Error('User not found'));
       }
