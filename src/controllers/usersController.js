@@ -80,14 +80,9 @@ const logout = async (req, res, next) => {
 
 const updateSubscriptionById = async (req, res, next) => {
   try {
-    console.log(req.body);
     if (Object.keys(req.body).length > 0) {
       const user = await userService.updateSubscr(req.user.id, req.body);
-      if (
-        req.body.subscription === STARTER ||
-        req.body.subscription === PRO ||
-        req.body.subscription === BUSINESS
-      ) {
+      if (user) {
         return res.status(HttpCode.OK).json({
           status: 'success',
           code: HttpCode.OK,

@@ -1,4 +1,7 @@
 const { UsersRepository } = require('../repository');
+const { Subscription } = require('../helpers/constants');
+
+const { STARTER, PRO, BUSINESS } = Subscription;
 
 class UsersService {
   constructor() {
@@ -23,9 +26,14 @@ class UsersService {
   }
 
   async updateSubscr(userId, body) {
-    console.log(userId, body);
-    const user = await this.repositories.users.updateSubscr(userId, body);
-    return user;
+    if (
+      body.subscription === STARTER ||
+      body.subscription === PRO ||
+      body.subscription === BUSINESS
+    ) {
+      const user = await this.repositories.users.updateSubscr(userId, body);
+      return user;
+    }
   }
 }
 
