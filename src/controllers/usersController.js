@@ -1,6 +1,13 @@
 const { HttpCode, Subscription } = require('../helpers/constants');
 const { AuthsService, UsersService } = require('../services');
 
+const path = require('path');
+const fs = require('fs').promises;
+const jimp = require('jimp');
+const { v4: uuid } = require('uuid');
+
+const IMG_DIR = path.join(process.cwd(), 'public', 'avatars');
+
 const authService = new AuthsService();
 const userService = new UsersService();
 const { STARTER, PRO, BUSINESS } = Subscription;
@@ -25,6 +32,7 @@ const registration = async (req, res, next) => {
           id: newUser.id,
           email: newUser.email,
           subscription: newUser.subscription,
+          avatarURL: newUser.avatarURL,
         },
       ],
     });
@@ -35,12 +43,12 @@ const registration = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   try {
-    const { name, email, subscription } = req.user;
+    const { name, email, subscription, avatarURL } = req.user;
     if (req.user) {
       return await res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        ResponseBody: { name, email, subscription },
+        ResponseBody: { name, email, subscription, avatarURL },
       });
     }
   } catch (error) {
@@ -109,10 +117,52 @@ const updateSubscriptionById = async (req, res, next) => {
   }
 };
 
+const updateAvatar = async (req, res, next) => {
+  try {
+    if (req.file) {
+      const id = req.user.id;
+      const { file } = req;
+      const img = await jimp.read(file.path);
+      await img
+        .autocrop()
+        .cover(
+          250,
+          250,
+          jimp.HORIZONTAL_ALIGN_CENTER || jimp.VERTICAL_ALIGN_MIDDLE,
+        )
+        .writeAsync(file.path);
+
+      const fileName = `${uuid()}_${file.originalname}`;
+      const newPath = path.join(IMG_DIR, fileName);
+      await fs.rename(file.path, newPath);
+
+      const url = req.url + '/' + fileName;
+
+      const avatarURL = await userService.updateAvatar(id, url);
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        users: {
+          avatarURL: avatarURL,
+        },
+      });
+    } else {
+      return next({
+        status: HttpCode.BAD_REQUEST,
+        message: 'Try uploading another file',
+        data: 'Bad Request',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getUser,
   registration,
   login,
   logout,
   updateSubscriptionById,
+  updateAvatar,
 };

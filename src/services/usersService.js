@@ -35,6 +35,14 @@ class UsersService {
       return user;
     }
   }
+
+  async updateAvatar(userId, pathFile) {
+    const avatarURL = await this.repositories.users.updateAvatar(
+      userId,
+      pathFile,
+    );
+    return avatarURL;
+  }
 }
 
 module.exports = UsersService;

@@ -33,6 +33,15 @@ class UsersRepository {
     );
     return { name, email, subscription };
   }
+
+  async updateAvatar(userId, pathFile) {
+    const { avatarURL } = await this.model.findByIdAndUpdate(
+      { _id: userId },
+      { avatarURL: pathFile },
+      { new: true },
+    );
+    return avatarURL;
+  }
 }
 
 module.exports = UsersRepository;
