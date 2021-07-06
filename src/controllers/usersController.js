@@ -43,12 +43,22 @@ const registration = async (req, res, next) => {
 
 const getUser = async (req, res, next) => {
   try {
-    const { name, email, subscription, avatarURL } = req.user;
-    if (req.user) {
-      return await res.status(HttpCode.OK).json({
+    const id = req.user.id;
+    // const { name, email, subscription, avatarURL } = req.user;
+    const user = await userService.getCurrentUser(id);
+    console.log(req.user);
+    console.log(user);
+    if (user) {
+      return res.status(HttpCode.OK).json({
         status: 'success',
         code: HttpCode.OK,
-        ResponseBody: { name, email, subscription, avatarURL },
+        user,
+      });
+    } else {
+      return next({
+        status: HttpCode.UNAUTHORIZED,
+        message: `Not authorized`,
+        data: 'Unauthorized',
       });
     }
   } catch (error) {

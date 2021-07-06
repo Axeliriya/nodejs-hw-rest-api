@@ -15,6 +15,11 @@ class UsersService {
     return user;
   }
 
+  async getCurrentUser(id) {
+    const user = await this.repositories.users.getCurrentUser(id);
+    return user;
+  }
+
   async findByEmail(email) {
     const data = await this.repositories.users.findByEmail(email);
     return data;

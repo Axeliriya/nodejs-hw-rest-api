@@ -11,6 +11,14 @@ class UsersRepository {
     return await user.save();
   }
 
+  async getCurrentUser(id) {
+    const user = await this.model.findOne(
+      { _id: id },
+      '_id name email subscription avatarURL',
+    );
+    return user;
+  }
+
   async findById(id) {
     const user = await this.model.findOne({ _id: id });
     return user;
