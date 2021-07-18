@@ -2,6 +2,8 @@ const { Router } = require('express');
 
 const {
   getUser,
+  getVerify,
+  getReVerification,
   registration,
   login,
   logout,
@@ -22,6 +24,8 @@ const routerUsers = Router();
 routerUsers
   .patch('/', userGuard, validateUpdate, updateSubscriptionById)
   .get('/current', userGuard, getUser)
+  .get('/verify/:verificationToken', getVerify)
+  .post('/verify', getReVerification)
   .post('/signup', createAccountLimiter, validateCreate, registration)
   .post('/login', validateCreate, login)
   .post('/logout', guard, logout)

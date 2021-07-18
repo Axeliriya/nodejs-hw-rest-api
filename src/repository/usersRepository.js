@@ -5,9 +5,9 @@ class UsersRepository {
     this.model = User;
   }
 
-  async createUser(email, password) {
+  async createUser(name, email, password, verifyToken) {
     const Model = this.model;
-    const user = await new Model({ email, password });
+    const user = await new Model({ name, email, password, verifyToken });
     return await user.save();
   }
 
@@ -19,6 +19,11 @@ class UsersRepository {
     return user;
   }
 
+  async getVerify(token) {
+    const result = await this.model.getVerify(token);
+    return result;
+  }
+
   async findById(id) {
     const user = await this.model.findOne({ _id: id });
     return user;
@@ -26,6 +31,11 @@ class UsersRepository {
 
   async findByEmail(email) {
     const user = await this.model.findOne({ email });
+    return user;
+  }
+
+  async findByField(field) {
+    const user = await this.model.findOne(field);
     return user;
   }
 

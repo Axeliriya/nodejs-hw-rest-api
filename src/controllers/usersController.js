@@ -13,7 +13,7 @@ const userService = new UsersService();
 const { STARTER, PRO, BUSINESS } = Subscription;
 
 const registration = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, name } = req.body;
   const user = await userService.findByEmail(email);
   if (user) {
     return next({
@@ -23,7 +23,7 @@ const registration = async (req, res, next) => {
     });
   }
   try {
-    const newUser = await userService.createUser(email, password);
+    const newUser = await userService.createUser(email, password, name);
     return res.status(HttpCode.CREATED).json({
       status: 'success',
       code: HttpCode.CREATED,
@@ -44,7 +44,6 @@ const registration = async (req, res, next) => {
 const getUser = async (req, res, next) => {
   try {
     const id = req.user.id;
-    // const { name, email, subscription, avatarURL } = req.user;
     const user = await userService.getCurrentUser(id);
     console.log(req.user);
     console.log(user);
@@ -59,6 +58,66 @@ const getUser = async (req, res, next) => {
         status: HttpCode.UNAUTHORIZED,
         message: `Not authorized`,
         data: 'Unauthorized',
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getVerify = async (req, res, next) => {
+  try {
+    const result = await userService.getVerify(req.params);
+    if (result) {
+      return res.status(HttpCode.OK).json({
+        status: 'success',
+        code: HttpCode.OK,
+        data: {
+          message: 'Verification saccessful',
+        },
+      });
+    } else {
+      return next({
+        status: HttpCode.NOT_FOUND,
+        message: `User not found`,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getReVerification = async (req, res, next) => {
+  try {
+    if (Object.keys(req.body).length > 0) {
+      const { email } = req.body;
+      const user = await userService.findByEmail(email);
+      if (user) {
+        const result = await userService.getReVerification(user);
+        if (result) {
+          return res.status(HttpCode.OK).json({
+            status: 'success',
+            code: HttpCode.OK,
+            data: {
+              message: 'Verification email sent',
+            },
+          });
+        } else {
+          return next({
+            status: HttpCode.BAD_REQUEST,
+            message: `Verification has already been passed`,
+          });
+        }
+      } else {
+        return next({
+          status: HttpCode.NOT_FOUND,
+          message: `User not found`,
+        });
+      }
+    } else {
+      return next({
+        status: HttpCode.BAD_REQUEST,
+        message: `missing required field email`,
       });
     }
   } catch (error) {
@@ -170,6 +229,8 @@ const updateAvatar = async (req, res, next) => {
 
 module.exports = {
   getUser,
+  getVerify,
+  getReVerification,
   registration,
   login,
   logout,

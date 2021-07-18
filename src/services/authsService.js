@@ -14,7 +14,11 @@ class AuthService {
 
   async login(email, password) {
     const user = await this.repositories.users.findByEmail(email);
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (
+      !user ||
+      !(await bcrypt.compare(password, user.password)) ||
+      !user.verify
+    ) {
       return null;
     }
     const id = user.id;
